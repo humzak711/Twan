@@ -1,8 +1,8 @@
-#include <include/subsys/debug/kdbg/kdbg.h>
-#include <include/errno.h>
-#include <include/kernel/kapi.h>
-#include <include/lib/twanprintf.h>
-#include <include/lib/libtwanvisor/libvcalls.h>
+#include <subsys/debug/kdbg/kdbg.h>
+#include <errno.h>
+#include <kernel/kapi.h>
+#include <lib/twanprintf.h>
+#include <lib/libtwanvisor/libvcalls.h>
 
 static struct kdbg kdbg_global;
 
@@ -37,7 +37,7 @@ void __kdbg(const char *str)
 
 void kdbg(const char *str)
 {
-#if TWANVISOR_ON
+#if CONFIG_SUBSYS_TWANVISOR
 
     if (twan()->flags.fields.twanvisor_on != 0) {
         tv_vkdbg(str);

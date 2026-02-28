@@ -1,12 +1,12 @@
 #ifndef _TWANVISOR_H_
 #define _TWANVISOR_H_
 
-#include <include/subsys/twanvisor/vsched/vsync.h>
-#include <include/subsys/twanvisor/vsched/vsched.h>
-#include <include/subsys/twanvisor/vsched/vsched_yield.h>
-#include <include/subsys/twanvisor/vdbg/vdbg.h>
-#include <include/kernel/kernel.h>
-#include <include/lib/dsa/bmp512.h>
+#include <subsys/twanvisor/vsched/vsync.h>
+#include <subsys/twanvisor/vsched/vsched.h>
+#include <subsys/twanvisor/vsched/vsched_yield.h>
+#include <subsys/twanvisor/vdbg/vdbg.h>
+#include <kernel/kernel.h>
+#include <lib/dsa/bmp512.h>
 
 #define VROOT_PARTITION_CRITICALITY VSCHED_MAX_CRITICALITY
 #define VSCHED_LAPIC_DCR DIV_16
@@ -182,12 +182,7 @@ typedef union
         u64 xapic_disable_status : 1;
         u64 tsc_aux : 1;
         u64 lmce : 1;
-        u64 reserved0 : 51;
-        u64 lint0 : 1;
-        u64 lint1 : 1;
-        u64 cmci : 1;
-        u64 tsr : 1;
-        u64 pmcr : 1;
+        u64 reserved0 : 56;
     } fields;
 } vper_cpu_trap_cache_t;
 
@@ -221,6 +216,8 @@ struct vper_cpu
     char nmi_stack[VINT_STACK_SIZE] __aligned(16);
     char df_stack[VINT_STACK_SIZE] __aligned(16);
     char mce_stack[VINT_STACK_SIZE] __aligned(16);
+
+    u32 mxcsr_mask;
 
     struct vcpu *current_vcpu;
 
@@ -294,6 +291,8 @@ struct vtwan_kernel
 
 #define vscheduler_of(vcpu) \
     (&vper_cpu_data(vqueue_to_vprocessor_id((vcpu)->vqueue_id))->vscheduler)
+
+#define vmxcsr_mask() (vthis_cpu_data()->mxcsr_mask)
 
 inline bool vcurrent_vcpu_is_preemption_enabled(void)
 {

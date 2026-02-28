@@ -1,7 +1,7 @@
-#include <include/subsys/sync/mcslock.h>
-#include <include/kernel/kapi.h>
-#include <include/lib/libtwanvisor/libvcalls.h>
-#include <include/lib/libtwanvisor/libvc.h>
+#include <subsys/sync/mcslock.h>
+#include <kernel/kapi.h>
+#include <lib/libtwanvisor/libvcalls.h>
+#include <lib/libtwanvisor/libvc.h>
 
 void mcsnode_init(struct mcsnode *node)
 {
@@ -47,7 +47,7 @@ bool __mcs_trylock(struct mcslock *lock, struct mcsnode *node)
 
 void __pv_mcs_lock(struct mcslock *lock, struct mcsnode *node)
 {
-#if TWANVISOR_PV_LOCKS
+#if CONFIG_TWANVISOR_PV_LOCKS
 
     if (twan()->flags.fields.twanvisor_on != 0) {
 
@@ -100,7 +100,7 @@ void __pv_mcs_lock(struct mcslock *lock, struct mcsnode *node)
 
 void __pv_mcs_unlock(struct mcslock *lock, struct mcsnode *node)
 {
-#if TWANVISOR_PV_LOCKS
+#if CONFIG_TWANVISOR_PV_LOCKS
 
     if (twan()->flags.fields.twanvisor_on != 0) {
         
@@ -134,7 +134,7 @@ void __pv_mcs_unlock(struct mcslock *lock, struct mcsnode *node)
 
 bool __pv_mcs_trylock(struct mcslock *lock, struct mcsnode *node)
 {
-#if TWANVISOR_PV_LOCKS
+#if CONFIG_TWANVISOR_PV_LOCKS
 
     if (twan()->flags.fields.twanvisor_on != 0)
         atomic64_set(&node->processor_id, this_processor_id());

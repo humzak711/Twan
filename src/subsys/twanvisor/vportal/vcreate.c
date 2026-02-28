@@ -1,15 +1,15 @@
-#include <include/subsys/twanvisor/vconf.h>
-#if TWANVISOR_ON
+#include <generated/autoconf.h>
+#if CONFIG_SUBSYS_TWANVISOR
 
-#include <include/subsys/twanvisor/vportal/vcreate.h>
-#include <include/subsys/twanvisor/vportal/vexit.h>
-#include <include/subsys/twanvisor/vportal/venter.h>
-#include <include/subsys/twanvisor/vportal/vrecovery.h>
-#include <include/subsys/twanvisor/vemulate/vemulate_utils.h>
-#include <include/subsys/twanvisor/vemulate/vtrap.h>
-#include <include/subsys/twanvisor/vemulate/verror.h>
-#include <include/subsys/twanvisor/vsched/vsched_mcs.h>
-#include <include/subsys/twanvisor/twanvisor.h>
+#include <subsys/twanvisor/vportal/vcreate.h>
+#include <subsys/twanvisor/vportal/vexit.h>
+#include <subsys/twanvisor/vportal/venter.h>
+#include <subsys/twanvisor/vportal/vrecovery.h>
+#include <subsys/twanvisor/vemulate/vemulate_utils.h>
+#include <subsys/twanvisor/vemulate/vtrap.h>
+#include <subsys/twanvisor/vemulate/verror.h>
+#include <subsys/twanvisor/vsched/vsched_mcs.h>
+#include <subsys/twanvisor/twanvisor.h>
 
 extern void __vexit(void);
 extern void __vlaunch(void);
@@ -206,6 +206,11 @@ void vcpu_setup(struct vpartition *vpartition, struct vcpu *vcpu,
 
     vcpu->context.rip = (u64)vcpu_entry;
     vcpu->context.rsp = (u64)&vcpu->vexit_stack[sizeof(vcpu->vexit_stack)];
+    vcpu->context.rbp = vcpu->context.rsp;
+    vcpu->context.rflags.val = 0x2;
+    vcpu->context.fp_context.fcw = DEFAULT_FCW;
+    vcpu->context.fp_context.mxcsr = DEFAULT_MXCSR;
+    vcpu->context.fp_context.mxcsr_mask = vmxcsr_mask();
 }
 
 void vpartition_setup(struct vpartition *vpartition, u8 vid)

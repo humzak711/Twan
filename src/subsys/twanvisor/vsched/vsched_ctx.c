@@ -1,8 +1,8 @@
-#include <include/subsys/twanvisor/vconf.h>
-#if TWANVISOR_ON
+#include <generated/autoconf.h>
+#if CONFIG_SUBSYS_TWANVISOR
 
-#include <include/subsys/twanvisor/vsched/vsched_ctx.h>
-#include <include/subsys/twanvisor/twanvisor.h>
+#include <subsys/twanvisor/vsched/vsched_ctx.h>
+#include <subsys/twanvisor/twanvisor.h>
 
 void vsched_put_ctx(struct vcpu *vcpu, struct interrupt_info *ctx)
 {
@@ -56,6 +56,18 @@ void vsched_set_ctx(struct vcpu *vcpu, struct interrupt_info *ctx)
 
     if (vcpu->set_callback_func)
         INDIRECT_BRANCH_SAFE(vcpu->set_callback_func());
+}
+
+void vsched_enter_ctx(struct vcpu *vcpu, struct interrupt_info *ctx)
+{
+    vthis_cpu_data()->current_vcpu = vcpu;
+
+    vcpu->vsched_metadata.state = VTRANSITIONING;
+
+    vsched_set_ctx(vcpu, ctx);
+
+    vcpu->vsched_metadata.current_time_slice_ticks = 
+        vcpu->vsched_metadata.time_slice_ticks;
 }
 
 #endif

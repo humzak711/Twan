@@ -1,9 +1,9 @@
 #define ASM_FILE 1
 
-#include <include/subsys/twanvisor/vconf.h>
-#if TWANVISOR_ON
+#include <generated/autoconf.h>
+#if CONFIG_SUBSYS_TWANVISOR
 
-#include <include/subsys/twanvisor/varch.h>
+#include <subsys/twanvisor/varch.h>
 
 // void __do_virtualise_core(u32 processor_id, u64 rip, u64 rsp, rflags_t rflags)
 .extern __do_virtualise_core

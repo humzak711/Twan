@@ -22,6 +22,11 @@ config KERNEL_SCHED_GLOBAL_QUEUE
     bool "Enable global kernel scheduling queue across all cores"
     default n
 
+config KERNEL_SCHED_TASK_STACK_SIZE
+    int
+    range 2048 4294967295
+    default 2048
+
 config KERNEL_SCHED_NUM_CRITICALITIES
     int "Criticality level count for kernel tasks"
     range 1 255
@@ -41,10 +46,6 @@ config KERNEL_MAX_VMA_PARTITIONS
     int "Maximum kernel vma partitions"
     range 2 261632
     default 512
-
-config KDBG_PANIC_ON_BUG
-    bool "Kpanic when KBUG checks flag a bug"
-    default n
 
 # Subsys
 
@@ -90,7 +91,7 @@ config TWANVISOR_PV_LOCK_THRESHOLD
     depends on TWANVISOR_PV_LOCKS
     int "Number of iterations before making a vcall under lock contention"
     range 0 4294967295
-    default 4096
+    default 32768
 
 config TWANVISOR_PV_IPIS
     bool "Enable kernel paravirtualised ipis"
@@ -100,7 +101,7 @@ config TWANVISOR_PV_IPI_THRESHOLD
     depends on TWANVISOR_PV_IPIS
     int "Number of iterations before making a vcall during ipi's"
     range 0 4294967295
-    default 4096
+    default 32768
 
 config TWANVISOR_VIPI_DRAIN_STRICT
     bool "Enable strict IPI draining"
@@ -191,4 +192,10 @@ config DEMO_DRIVERS
 config DEMO_PV_TWANVISOR
     depends on SUBSYS_TWANVISOR
     bool "Enable demo for twanvisor"
+    default n
+
+# Kdbg
+
+config KDBG_PANIC_ON_BUG
+    bool "Kpanic when KBUG checks flag a bug"
     default n

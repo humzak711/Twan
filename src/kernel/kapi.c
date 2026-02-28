@@ -1,10 +1,11 @@
-#include <include/kernel/kapi.h>
-#include <include/kernel/isr/isr_dispatcher.h>
-#include <include/kernel/isr/base_isrs.h>
-#include <include/kernel/apic/apic.h>
-#include <include/lib/libtwanvisor/libvcalls.h>
-#include <include/errno.h>
-#include <include/std.h>
+#include <kernel/kapi.h>
+#include <kernel/isr/isr_dispatcher.h>
+#include <kernel/isr/base_isrs.h>
+#include <kernel/apic/apic.h>
+#include <lib/libtwanvisor/libvcalls.h>
+#include <subsys/debug/kdbg/kdbg.h>
+#include <errno.h>
+#include <std.h>
 
 extern void __emulate_interrupt(u64 rsp, u8 vector, u64 errcode);
 
@@ -75,7 +76,7 @@ int __ipi_run_func(u32 processor_id, ipi_func_t func, u64 arg, bool wait)
 
     __ipi_assert(data);
 
-#if TWANVISOR_ON
+#if CONFIG_SUBSYS_TWANVISOR
 
     if (kernel->flags.fields.twanvisor_on != 0) {
 

@@ -1,10 +1,10 @@
-#include <include/subsys/twanvisor/vconf.h>
-#if TWANVISOR_ON
+#include <generated/autoconf.h>
+#if CONFIG_SUBSYS_TWANVISOR
 
-#include <include/subsys/twanvisor/vsched/vsched_timer.h>
-#include <include/subsys/twanvisor/twanvisor.h>
-#include <include/subsys/twanvisor/visr/visr_index.h>
-#include <include/subsys/twanvisor/vemulate/vemulate_utils.h>
+#include <subsys/twanvisor/vsched/vsched_timer.h>
+#include <subsys/twanvisor/twanvisor.h>
+#include <subsys/twanvisor/visr/visr_index.h>
+#include <subsys/twanvisor/vemulate/vemulate_utils.h>
 
 bool vis_sched_timer_done(void)
 {

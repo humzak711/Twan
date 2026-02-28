@@ -1,13 +1,13 @@
-#include <include/subsys/sync/mutex.h>
+#include <subsys/sync/mutex.h>
 #if CONFIG_SUBSYS_MUTEX
 
-#include <include/kernel/kapi.h>
+#include <kernel/kapi.h>
 
 int mutex_ipcp_init(struct mutex_ipcp *mutex_ipcp, u8 priority_ceiling, 
                     u8 criticality_ceiling)
 
 {
-    if (criticality_ceiling >= SCHED_NUM_CRITICALITIES)
+    if (criticality_ceiling >= CONFIG_KERNEL_SCHED_NUM_CRITICALITIES)
         return -EINVAL;
 
     mutex_ipcp->priority_ceiling = priority_ceiling;

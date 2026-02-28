@@ -1,8 +1,8 @@
-#include <include/subsys/twanvisor/vconf.h>
-#if TWANVISOR_ON
+#include <generated/autoconf.h>
+#if CONFIG_SUBSYS_TWANVISOR
 
-#include <include/subsys/twanvisor/vemulate/verror.h>
-#include <include/lib/x86_index.h>
+#include <subsys/twanvisor/vemulate/verror.h>
+#include <lib/x86_index.h>
 
 static char *vmcs_err_table[] = {
     [0] = "UNKNOWN, ERRCODE 0",

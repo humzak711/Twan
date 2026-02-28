@@ -1,16 +1,15 @@
 #ifndef _MCSLOCK_H_
 #define _MCSLOCK_H_
 
-#include <include/std.h>
-#include <include/lib/atomic.h>
-#include <include/subsys/twanvisor/vconf.h>
+#include <std.h>
+#include <lib/atomic.h>
 
 struct mcsnode
 {
     atomic_ptr_t next;
     atomic32_t state;
 
-#if TWANVISOR_PV_LOCKS
+#if CONFIG_TWANVISOR_PV_LOCKS
     atomic64_t processor_id;
 #endif
 };

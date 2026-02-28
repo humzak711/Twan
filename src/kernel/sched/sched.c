@@ -1,6 +1,6 @@
-#include <include/kernel/sched/sched.h>
-#include <include/kernel/kapi.h>
-#include <include/subsys/debug/kdbg/kdbg.h>
+#include <kernel/sched/sched.h>
+#include <kernel/kapi.h>
+#include <subsys/debug/kdbg/kdbg.h>
 
 void sched_worker(__unused void *unused)
 {
@@ -26,7 +26,7 @@ void sched_trampoline_ipi(__unused u64 unused)
     struct task *task = sched_pop_clean_spin();
     sched_set_ctx(ctx, task);
 
-    sched_timer_init(SCHED_TIME_SLICE_MS);
+    sched_timer_init(CONFIG_KERNEL_SCHED_TIME_SLICE_MS);
 }
 
 void scheduler_init(void)

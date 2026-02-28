@@ -1,7 +1,7 @@
-#include <include/subsys/twanvisor/vconf.h>
-#if TWANVISOR_ON
+#include <generated/autoconf.h>
+#if CONFIG_SUBSYS_TWANVISOR
 
-#include <include/subsys/twanvisor/vsched/vsync.h>
+#include <subsys/twanvisor/vsched/vsync.h>
 
 void vmcs_lock_isr_save(struct mcslock_isr *lock, struct mcsnode *node)
 {

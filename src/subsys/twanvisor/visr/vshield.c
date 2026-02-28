@@ -1,9 +1,9 @@
-#include <include/subsys/twanvisor/vconf.h>
-#if TWANVISOR_ON
+#include <generated/autoconf.h>
+#if CONFIG_SUBSYS_TWANVISOR
 
-#include <include/subsys/twanvisor/visr/vshield.h>
-#include <include/subsys/twanvisor/twanvisor.h>
-#include <include/subsys/twanvisor/visr/visr_index.h>
+#include <subsys/twanvisor/visr/vshield.h>
+#include <subsys/twanvisor/twanvisor.h>
+#include <subsys/twanvisor/visr/visr_index.h>
 
 int venter_shield_local(u64 *flags, u8 vector, u64 rip)
 {

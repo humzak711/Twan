@@ -1,15 +1,14 @@
-#include <include/initcalls/late_initcalls_conf.h>
-#include <include/generated/autoconf.h>
+#include <initcalls/late_initcalls_conf.h>
+#include <generated/autoconf.h>
 
 #if LATE_TIME_CMOS && CONFIG_SUBSYS_CLOCK
 
-#include <include/kernel/kapi.h>
-#include <include/subsys/time/clock.h>
-#include <include/subsys/twanvisor/vconf.h>
-#include <include/kernel/mem/mmu/paging.h>
-#include <include/kernel/acpi_api/acpi_api.h>
-#include <include/lib/libtwanvisor/libvcalls.h>
-#include <include/lib/libtwanvisor/libvc.h>
+#include <kernel/kapi.h>
+#include <subsys/time/clock.h>
+#include <kernel/mem/mmu/paging.h>
+#include <kernel/acpi_api/acpi_api.h>
+#include <lib/libtwanvisor/libvcalls.h>
+#include <lib/libtwanvisor/libvc.h>
 
 /* configs */
 
@@ -300,7 +299,7 @@ static __late_initcall void cmos_init(void)
         return;
     }
 
-#if TWANVISOR_ON
+#if CONFIG_SUBSYS_TWANVISOR
 
     if (twan()->flags.fields.twanvisor_on != 0) {
 

@@ -1,14 +1,14 @@
-#include <include/subsys/twanvisor/vconf.h>
-#if TWANVISOR_ON
+#include <generated/autoconf.h>
+#if CONFIG_SUBSYS_TWANVISOR
 
-#include <include/subsys/twanvisor/visr/visr_dispatcher.h>
-#include <include/subsys/twanvisor/twanvisor.h>
-#include <include/subsys/twanvisor/visr/visr_index.h>
-#include <include/subsys/twanvisor/vemulate/vemulate_utils.h>
-#include <include/subsys/twanvisor/vsched/vsched_timer.h>
-#include <include/subsys/twanvisor/vsched/vsched_yield.h>
-#include <include/kernel/isr/isr_dispatcher.h>
-#include <include/kernel/apic/apic.h>
+#include <subsys/twanvisor/visr/visr_dispatcher.h>
+#include <subsys/twanvisor/twanvisor.h>
+#include <subsys/twanvisor/visr/visr_index.h>
+#include <subsys/twanvisor/vemulate/vemulate_utils.h>
+#include <subsys/twanvisor/vsched/vsched_timer.h>
+#include <subsys/twanvisor/vsched/vsched_yield.h>
+#include <kernel/isr/isr_dispatcher.h>
+#include <kernel/apic/apic.h>
 
 void vacknowledge_interrupt(u8 vector)
 {
@@ -238,7 +238,7 @@ void vexit_ext_dispatcher(u8 vector)
 
     vacknowledge_interrupt(vector);
 
-#if TWANVISOR_VIPI_DRAIN_STRICT
+#if CONFIG_TWANVISOR_VIPI_DRAIN_STRICT
 
     /* external interrupts are treated as a special case in how we should 
        handle vipi draining */

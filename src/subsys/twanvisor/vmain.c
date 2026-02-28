@@ -1,19 +1,19 @@
-#include <include/subsys/twanvisor/vconf.h>
-#if TWANVISOR_ON
+#include <generated/autoconf.h>
+#if CONFIG_SUBSYS_TWANVISOR
 
-#include <include/subsys/twanvisor/vmain.h>
-#include <include/subsys/twanvisor/vsched/vpartition.h>
-#include <include/subsys/twanvisor/vsched/vsched_mcs.h>
-#include <include/subsys/twanvisor/vemulate/vemulate_utils.h>
-#include <include/subsys/twanvisor/vemulate/verror.h>
-#include <include/subsys/twanvisor/vemulate/vtrap.h>
-#include <include/subsys/twanvisor/visr/visr_index.h>
-#include <include/subsys/twanvisor/vportal/vexit.h>
-#include <include/subsys/time/counter.h>
-#include <include/subsys/mem/vma.h>
-#include <include/kernel/kapi.h>
-#include <include/kernel/extern.h>
-#include <include/kernel/apic/apic.h>
+#include <subsys/twanvisor/vmain.h>
+#include <subsys/twanvisor/vsched/vpartition.h>
+#include <subsys/twanvisor/vsched/vsched_mcs.h>
+#include <subsys/twanvisor/vemulate/vemulate_utils.h>
+#include <subsys/twanvisor/vemulate/verror.h>
+#include <subsys/twanvisor/vemulate/vtrap.h>
+#include <subsys/twanvisor/visr/visr_index.h>
+#include <subsys/twanvisor/vportal/vexit.h>
+#include <subsys/time/counter.h>
+#include <subsys/mem/vma.h>
+#include <kernel/kapi.h>
+#include <kernel/extern.h>
+#include <kernel/apic/apic.h>
 
 extern void __virtualise_core(u64 vprocessor_id);
 
@@ -66,7 +66,6 @@ void lapic_reconfig(struct vper_cpu *vthis_cpu)
         lint0.fields.delivery_mode = DM_NORMAL;
         lint0.fields.vector = NMI;
         lapic_write(LAPIC_LINT0_OFFSET, lint0.val);
-        vthis_cpu->vcache.trap_cache.fields.lint0 = 1;
     }
 
     if (lint1.fields.delivery_mode == DM_NMI) {
@@ -74,7 +73,6 @@ void lapic_reconfig(struct vper_cpu *vthis_cpu)
         lint1.fields.delivery_mode = DM_NORMAL;
         lint1.fields.vector = NMI;
         lapic_write(LAPIC_LINT1_OFFSET, lint1.val);
-        vthis_cpu->vcache.trap_cache.fields.lint1 = 1;
     }
     
     if (feature_bits_d.fields.mca != 0) {
@@ -90,12 +88,11 @@ void lapic_reconfig(struct vper_cpu *vthis_cpu)
                 .val = lapic_read(LAPIC_CMCI_OFFSET)
             };
 
-            if (cmci.fields.delivery_mode == DM_NMI) {
+            if (KBUG_ON(cmci.fields.delivery_mode == DM_NMI)) {
 
                 cmci.fields.delivery_mode = DM_NORMAL;
                 cmci.fields.vector = NMI;
                 lapic_write(LAPIC_CMCI_OFFSET, cmci.val);
-                vthis_cpu->vcache.trap_cache.fields.cmci = 1;
             }
         }
     }
@@ -109,12 +106,11 @@ void lapic_reconfig(struct vper_cpu *vthis_cpu)
             .val = lapic_read(LAPIC_TSR_OFFSET)
         };
 
-        if (tsr.fields.delivery_mode == DM_NMI) {
+        if (KBUG_ON(tsr.fields.delivery_mode == DM_NMI)) {
         
             tsr.fields.delivery_mode = DM_NORMAL;
             tsr.fields.vector = NMI;
             lapic_write(LAPIC_TSR_OFFSET, tsr.val);
-            vthis_cpu->vcache.trap_cache.fields.tsr = 1;
         }
     }
 
@@ -126,66 +122,12 @@ void lapic_reconfig(struct vper_cpu *vthis_cpu)
             .val = lapic_read(LAPIC_PMCR_OFFSET)
         };
 
-        if (pmcr.fields.delivery_mode == DM_NMI) {
+        if (KBUG_ON(pmcr.fields.delivery_mode == DM_NMI)) {
         
             pmcr.fields.delivery_mode = DM_NORMAL;
             pmcr.fields.vector = NMI;
             lapic_write(LAPIC_PMCR_OFFSET, pmcr.val);
-            vthis_cpu->vcache.trap_cache.fields.pmcr = 1;
         }
-    }
-}
-
-void lapic_reconfig_undo(struct vper_cpu *vthis_cpu)
-{
-    if (vthis_cpu->vcache.trap_cache.fields.lint0 != 0) {
-
-        lapic_lint_t lint0 = {
-            .val = lapic_read(LAPIC_LINT0_OFFSET)
-        };
-
-        lint0.fields.delivery_mode = DM_NMI;
-        lapic_write(LAPIC_LINT0_OFFSET, lint0.val);
-    }
-
-    if (vthis_cpu->vcache.trap_cache.fields.lint1 != 0) {
-
-        lapic_lint_t lint1 = {
-            .val = lapic_read(LAPIC_LINT1_OFFSET)
-        };
-
-        lint1.fields.delivery_mode = DM_NMI;
-        lapic_write(LAPIC_LINT1_OFFSET, lint1.val);
-    }
-
-    if (vthis_cpu->vcache.trap_cache.fields.cmci != 0) {
-
-        lapic_cmci_t cmci = {
-            .val = lapic_read(LAPIC_CMCI_OFFSET)
-        };
-
-        cmci.fields.delivery_mode = DM_NMI;
-        lapic_write(LAPIC_CMCI_OFFSET, cmci.val);   
-    }
-
-    if (vthis_cpu->vcache.trap_cache.fields.tsr != 0) {
-        
-        lapic_tsr_t tsr = {
-            .val = lapic_read(LAPIC_TSR_OFFSET)
-        };
-
-        tsr.fields.delivery_mode = DM_NMI;
-        lapic_write(LAPIC_TSR_OFFSET, tsr.val);
-    }
-
-    if (vthis_cpu->vcache.trap_cache.fields.pmcr != 0) {
-        
-        lapic_pmcr_t pmcr = {
-            .val = lapic_read(LAPIC_PMCR_OFFSET)
-        };
-
-        pmcr.fields.delivery_mode = DM_NMI;
-        lapic_write(LAPIC_PMCR_OFFSET, pmcr.val);
     }
 }
 
@@ -437,11 +379,14 @@ void vper_cpu_flags_init(struct vper_cpu *vthis_cpu)
 
 int vper_cpu_data_init(struct vper_cpu *vthis_cpu, u32 vprocessor_id)
 {
+    lapic_reconfig(vthis_cpu);
     vset_available_vectors(&vthis_cpu->available_vectors);
 
     vthis_cpu->this = vthis_cpu;
     
     struct per_cpu *this_cpu = this_cpu_data();
+
+    vthis_cpu->mxcsr_mask = mxcsr_mask();
 
     vthis_cpu->processor_id = this_processor_id();
     vthis_cpu->vprocessor_id = vprocessor_id;
@@ -460,6 +405,16 @@ int vper_cpu_data_init(struct vper_cpu *vthis_cpu, u32 vprocessor_id)
 
     vthis_cpu->vscheduler.vcriticality_level = VSCHED_MIN_CRITICALITY;
     mcslock_isr_init(&vthis_cpu->vscheduler.lock);
+
+    struct vcpu *idle = &vthis_cpu->vscheduler.idle_vcpu;
+
+    idle->context.rip = (u64)vidle_vcpu_loop;
+    idle->context.rsp = (u64)&idle->vexit_stack[sizeof(idle->vexit_stack)];
+    idle->context.rbp = idle->context.rsp;
+    idle->context.rflags.val = 0x2;
+    idle->context.fp_context.fcw = DEFAULT_FCW;
+    idle->context.fp_context.mxcsr = DEFAULT_MXCSR;
+    idle->context.fp_context.mxcsr_mask = mxcsr_mask();
 
     vthis_cpu->tss.ist1 = 
         (u64)(&vthis_cpu->nmi_stack[sizeof(vthis_cpu->nmi_stack)]);
@@ -756,8 +711,8 @@ void __do_virtualise_core(u32 vprocessor_id, u64 rip, u64 rsp, rflags_t rflags)
     cr3_t cr3 = __read_cr3();
     cr4_t cr4 = __read_cr4();
 
-    cr0 = adjust_cr0(cr0);
-    cr4 = adjust_cr4(cr4);
+    cr0 = vadjust_cr0(cr0);
+    cr4 = vadjust_cr4(cr4);
     cr4.fields.vmxe = 1;
 
     __write_cr0(cr0);
@@ -1043,17 +998,8 @@ void __do_virtualise_core(u32 vprocessor_id, u64 rip, u64 rsp, rflags_t rflags)
     u64 flags = read_flags_and_disable_interrupts();
     vcpu->visr_pending.delivery.fields.intl = __read_cr8().fields.tpr;
 
-    /* reconfiguring here is kinda dirty, if vmlaunch fails, then any interrupts
-       set to fire from the reconfigured lvt entries will stay pending in the 
-       irr rather than fire straight away as nmi's 
-       
-       - this is fine aslong as we are not routing any nmi's before twanvisor
-         initializes, which we should not be doing anyway */
-    lapic_reconfig(vthis_cpu);
-
     if (!__vmlaunch()) {
         
-        lapic_reconfig_undo(vthis_cpu);
         write_flags(flags);
 
         kdbgf("vmlaunch failed on processor %d, err %s\n", 

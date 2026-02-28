@@ -1,18 +1,15 @@
 #ifndef _TASK_H_
 #define _TASK_H_
 
-#include <include/lib/x86_index.h>
-#include <include/std.h>
-#include <include/kernel/isr/isr_index.h>
-#include <include/kernel/boot.h>
-#include <include/lib/dsa/flat_priorityq.h>
-#include <include/lib/dsa/dq.h>
-#include <include/lib/dsa/delta_chain.h>
-#include <include/errno.h>
-#include <include/kernel/sched/sched_conf.h>
-#include <include/kernel/sched/sched_mcs.h>
-#include <include/subsys/sync/mcslock.h>
-#include <include/subsys/debug/kdbg/kdbg.h>
+#include <lib/x86_index.h>
+#include <std.h>
+#include <kernel/isr/isr_index.h>
+#include <kernel/boot.h>
+#include <lib/dsa/flat_priorityq.h>
+#include <lib/dsa/dq.h>
+#include <lib/dsa/delta_chain.h>
+#include <kernel/sched/sched_mcs.h>
+#include <subsys/sync/mcslock.h>
 
 typedef void (*task_func_t)(void *arg);
 
@@ -36,7 +33,7 @@ struct task
     u8 *mempool;
     struct context context;
 
-    struct list_double nodes[SCHED_NUM_CRITICALITIES];
+    struct list_double nodes[CONFIG_KERNEL_SCHED_NUM_CRITICALITIES];
     struct flat_priorityq_node waiting_node;
 
     struct delta_node sleep_node;
@@ -139,7 +136,7 @@ struct task
     task_create_on_cpu(this_processor_id(), (func), (arg), (priority),  \
                        (criticality)) 
 
-#if SCHED_GLOBAL_QUEUE 
+#if CONFIG_KERNEL_SCHED_GLOBAL_QUEUE 
 
 int task_init(struct task *task, __unused u32 processor_id, void *mempool,
               u64 stack_top, task_func_t func, void *arg, u8 priority, 
