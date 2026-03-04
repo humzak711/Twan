@@ -5,9 +5,6 @@
 #include <subsys/twanvisor/vsched/vsched_ctx.h>
 #include <subsys/twanvisor/vsched/vsched_dsa.h>
 
-#define VSCHED_IDLE_KICK_UNSET 0
-#define VSCHED_IDLE_KICK_SET 1
-
 #define vsched_get_spin(ctx) vsched_get_or_idle((ctx))
 
 void __vsched_put(struct vcpu *vcpu, bool put_ctx, 

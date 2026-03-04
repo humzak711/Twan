@@ -8,6 +8,9 @@
 #include <subsys/twanvisor/vsched/vcpu.h>
 #include <subsys/sync/mcslock.h>
 
+#define VSCHED_IDLE_KICK_UNSET 0
+#define VSCHED_IDLE_KICK_SET 1
+
 struct vscheduler
 {
 #if CONFIG_TWANVISOR_VSCHED_MCQS
@@ -27,6 +30,8 @@ struct vscheduler
 };
 
 STATIC_ASSERT(CONFIG_TWANVISOR_VSCHED_MCQS + CONFIG_TWANVISOR_VSCHED_MCFS == 1);
+
+void __vsched_idle_kick_set(struct vcpu *vcpu);
 
 #if CONFIG_TWANVISOR_VSCHED_MCQS
 
