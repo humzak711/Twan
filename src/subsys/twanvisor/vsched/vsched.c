@@ -22,8 +22,6 @@ void __vsched_put(struct vcpu *vcpu, bool put_ctx,
 #if CONFIG_TWANVISOR_VSCHED_MCQS
     __vsched_push(vcpu);
 #endif
-
-    __vsched_idle_kick_set(vcpu);
 }
 
 void __vsched_put_paused(struct vcpu *vcpu, bool pv_spin, bool put_ctx,

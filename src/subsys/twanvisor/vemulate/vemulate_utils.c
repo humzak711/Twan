@@ -771,6 +771,9 @@ int vemu_vframe_set(u8 vid, u32 processor_id, u32 frame_id)
     if (state != VTERMINATED && !vsched->frames[frame_id]) {
 
         vsched->frames[frame_id] = vcpu;
+        if (state == VREADY)
+            __vsched_idle_kick_set(vcpu);
+
         ret = 0;
     }
 
