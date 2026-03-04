@@ -24,17 +24,23 @@
 
 STATIC_ASSERT(VNUM_VTIMERS <= UINT8_MAX);
 
-#define VREADY 0
-#define VRUNNING 1
-#define VPAUSED 2
-#define VPV_SPINNING 3
-#define VTRANSITIONING 4
-#define VTERMINATED 5
-#define VINITIALIZING 6
+typedef enum
+{
+    VREADY = 0,
+    VRUNNING = 1,
+    VPAUSED = 2,
+    VPV_SPINNING = 3,
+    VTRANSITIONING = 4,
+    VTERMINATED = 5,
+    VINITIALIZING = 6
+} vcpu_state_t;
 
-#define VBOOT_NONE 0
-#define VBOOT_READY 1
-#define VBOOT_PAUSED 2
+typedef enum
+{
+    VBOOT_NONE = 0,
+    VBOOT_READY = 1,
+    VBOOT_PAUSED = 2
+} vcpu_vboot_state_t;
 
 typedef enum
 {
@@ -231,7 +237,7 @@ struct vcpu
     } voperation_queue;
 
     struct vlaunch_regs vlaunch;
-    u8 vboot_state;
+    vcpu_vboot_state_t vboot_state;
 };
 
 #if CONFIG_TWANVISOR_VSCHED_STRICT

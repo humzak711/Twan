@@ -8,24 +8,24 @@
 
 typedef enum
 {
-    full,
-    high,
+    full = 0,
+    high = 1,
 } vmcs_access_t;
 
 typedef enum
 {
-    control,
-    vm_exit,
-    guest_state,
-    host_state,
+    control = 0,
+    vm_exit = 1,
+    guest_state = 2,
+    host_state = 3,
 } vmcs_type_t;
 
 typedef enum
 {
-    word,
-    qword,
-    dword,
-    natural,
+    word = 0,
+    qword = 1,
+    dword = 2,
+    natural = 3,
 } vmcs_width_t;
 
 #define ENC_VMCS_COMPONENT(access, index, type, width) \
@@ -649,13 +649,13 @@ typedef union
 
 typedef enum 
 {
-    DM_NORMAL,
-    DM_LOW_PRIORITY,
-    DM_SMI,
+    DM_NORMAL = 0,
+    DM_LOW_PRIORITY = 1,
+    DM_SMI = 2,
     DM_NMI = 4,
-    DM_INIT,
-    DM_STARTUP,
-    DM_EXTERNAL
+    DM_INIT = 5,
+    DM_STARTUP = 6,
+    DM_EXTERNAL = 7
 } delivery_mode_t;
 
 #define ioapic_reg_low(pin) (IOAPIC_REG_REDIRECTION_MIN + ((pin) * 2))
@@ -1120,38 +1120,38 @@ SIZE_ASSERT(struct idt_descriptor64, 16);
 
 typedef enum
 {
-    DIVIDE_ERROR,
-    DEBUG_EXCEPTION,
-    NMI,
-    BREAKPOINT,
-    OVERFLOW,
-    BOUND_RANGE_EXCEEDED,
-    INVALID_OPCODE,
-    DEVICE_NOT_AVAILABLE,
-    DOUBLE_FAULT,
-    COPROCESSOR_SEGMENT_OVERRUN,
-    INVALID_TSS,
-    SEGMENT_NOT_PRESENT,
-    STACK_SEGMENT_FAULT,
-    GENERAL_PROTECTION_FAULT,
-    PAGE_FAULT,
-    VECTOR15,
-    MATH_FAULT,
-    ALIGNMENT_CHECK,
-    MACHINE_CHECK,
-    SIMD_FLOATING_POINT_EXCEPTION,
-    VIRTUALISATION_EXCEPTION,
-    CONTROL_PROTECTION_EXCEPTION,
-    VECTOR22,
-    VECTOR23,
-    VECTOR24,
-    VECTOR25,
-    VECTOR26,
-    VECTOR27,
-    VECTOR28,
-    VECTOR29,
-    VECTOR30,
-    VECTOR31,
+    DIVIDE_ERROR = 0,
+    DEBUG_EXCEPTION = 1,
+    NMI = 2,
+    BREAKPOINT = 3,
+    OVERFLOW = 4,
+    BOUND_RANGE_EXCEEDED = 5,
+    INVALID_OPCODE = 6,
+    DEVICE_NOT_AVAILABLE = 7,
+    DOUBLE_FAULT = 8,
+    COPROCESSOR_SEGMENT_OVERRUN = 9,
+    INVALID_TSS = 10,
+    SEGMENT_NOT_PRESENT = 11,
+    STACK_SEGMENT_FAULT = 12,
+    GENERAL_PROTECTION_FAULT = 13,
+    PAGE_FAULT = 14,
+    VECTOR15 = 15,
+    MATH_FAULT = 16,
+    ALIGNMENT_CHECK = 17,
+    MACHINE_CHECK = 18,
+    SIMD_FLOATING_POINT_EXCEPTION = 19,
+    VIRTUALISATION_EXCEPTION = 20,
+    CONTROL_PROTECTION_EXCEPTION = 21,
+    VECTOR22 = 22,
+    VECTOR23 = 23,
+    VECTOR24 = 24,
+    VECTOR25 = 25,
+    VECTOR26 = 26,
+    VECTOR27 = 27,
+    VECTOR28 = 28,
+    VECTOR29 = 29,
+    VECTOR30 = 30,
+    VECTOR31 = 31,
     EXTERNAL_INTERRUPT_MIN = 32,
     EXTERNAL_INTERRUPT_MAX = 255
 } vector_t;
@@ -2453,15 +2453,15 @@ typedef union
 
 typedef enum 
 {
-    COND,
-    NEAR_JMP_IND,
-    NEAR_JMP_REL,
-    NEAR_CALL_IND,
-    NEAR_CALL_REL,
-    NEAR_RET,
-    RESERVED,
-    OTHER,
-    UNKNOWN,
+    COND = 0,
+    NEAR_JMP_IND = 1,
+    NEAR_JMP_REL = 2,
+    NEAR_CALL_IND = 3,
+    NEAR_CALL_REL = 4,
+    NEAR_RET = 5,
+    RESERVED = 6,
+    OTHER = 7,
+    UNKNOWN = 8,
 } lbr_branch_type;
 
 #define IA32_PMC0 0xC1
@@ -3184,9 +3184,9 @@ inline access_rights_t __segment_ar(selector_t selector)
 
 typedef enum 
 {
-    INVAL,
-    SMT,
-    CORE
+    INVAL = 0,
+    SMT = 1,
+    CORE = 2
 } subleaf_type_0x0b_t;
 
 //bool __this_topology_0x1f(u32 *lapic_id, u32 *thread_id,
@@ -3328,14 +3328,14 @@ typedef union
 
 typedef enum
 {
-    EPT_UC,
-    EPT_WC,
-    EPT_RESERVED0,
-    EPT_RESERVED1,
-    EPT_WT,
-    EPT_WP,
-    EPT_WB,
-    EPT_CACHING_POLICY_GUARD
+    EPT_UC = 0,
+    EPT_WC = 1,
+    EPT_RESERVED0 = 2,
+    EPT_RESERVED1 = 3,
+    EPT_WT = 4,
+    EPT_WP = 5,
+    EPT_WB = 6,
+    EPT_CACHING_POLICY_GUARD = 7
 } ept_caching_policy_t;
 
 typedef union
@@ -3638,10 +3638,10 @@ typedef union
 
 typedef enum
 {
-    active,
-    hlt,
-    shutdown,
-    wait_for_sipi,
+    GUEST_ACTIVE = 0,
+    GUEST_HLT = 1,
+    GUEST_SHUTDOWN = 2,
+    GUEST_WAIT_FOR_SIPI = 3,
 } guest_activity_state_t;
 
 typedef union
@@ -3899,82 +3899,82 @@ SIZE_ASSERT(struct ve_info_area, 4096);
 
 typedef enum
 {
-    EXIT_REASON_EXCEPTION,
-    EXIT_REASON_EXT_INTR,
-    EXIT_REASON_TRIPLE_FAULT,
-    EXIT_REASON_INIT,
-    EXIT_REASON_SIPI,
-    EXIT_REASON_IO_SMI,
-    EXIT_REASON_SMI,
-    EXIT_REASON_INTR_WINDOW,
-    EXIT_REASON_NMI_WINDOW,
-    EXIT_REASON_TASK_SWITCH,
-    EXIT_REASON_CPUID,
-    EXIT_REASON_GETSEC,
-    EXIT_REASON_HLT,
-    EXIT_REASON_INVD,
-    EXIT_REASON_INVLPG,
-    EXIT_REASON_RDPMC,
-    EXIT_REASON_RDTSC,
-    EXIT_REASON_RSM,
-    EXIT_REASON_VMCALL,
-    EXIT_REASON_VMCLEAR,
-    EXIT_REASON_VMLAUNCH,
-    EXIT_REASON_VMPTRLD,
-    EXIT_REASON_VMPTRST,
-    EXIT_REASON_VMREAD,
-    EXIT_REASON_VMRESUME,
-    EXIT_REASON_VMWRITE,
-    EXIT_REASON_VMXOFF,
-    EXIT_REASON_VMXON,
-    EXIT_REASON_CR_ACCESS,
-    EXIT_REASON_DR_ACCESS,
-    EXIT_REASON_INOUT,
-    EXIT_REASON_RDMSR,
-    EXIT_REASON_WRMSR,
-    EXIT_REASON_VMENTRY_INVAL_VMCS,
-    EXIT_REASON_VMENTRY_MSR_LOADING,
+    EXIT_REASON_EXCEPTION = 0,
+    EXIT_REASON_EXT_INTR = 1,
+    EXIT_REASON_TRIPLE_FAULT = 2,
+    EXIT_REASON_INIT = 3,
+    EXIT_REASON_SIPI = 4,
+    EXIT_REASON_IO_SMI = 5,
+    EXIT_REASON_SMI = 6,
+    EXIT_REASON_INTR_WINDOW = 7,
+    EXIT_REASON_NMI_WINDOW = 8,
+    EXIT_REASON_TASK_SWITCH = 9,
+    EXIT_REASON_CPUID = 10,
+    EXIT_REASON_GETSEC = 11,
+    EXIT_REASON_HLT = 12,
+    EXIT_REASON_INVD = 13,
+    EXIT_REASON_INVLPG = 14,
+    EXIT_REASON_RDPMC = 15,
+    EXIT_REASON_RDTSC = 16,
+    EXIT_REASON_RSM = 17,
+    EXIT_REASON_VMCALL = 18,
+    EXIT_REASON_VMCLEAR = 19,
+    EXIT_REASON_VMLAUNCH = 20,
+    EXIT_REASON_VMPTRLD = 21,
+    EXIT_REASON_VMPTRST = 22,
+    EXIT_REASON_VMREAD = 23,
+    EXIT_REASON_VMRESUME = 24,
+    EXIT_REASON_VMWRITE = 25,
+    EXIT_REASON_VMXOFF = 26,
+    EXIT_REASON_VMXON = 27,
+    EXIT_REASON_CR_ACCESS = 28,
+    EXIT_REASON_DR_ACCESS = 29,
+    EXIT_REASON_INOUT = 30,
+    EXIT_REASON_RDMSR = 31,
+    EXIT_REASON_WRMSR = 32,
+    EXIT_REASON_VMENTRY_INVAL_VMCS = 33,
+    EXIT_REASON_VMENTRY_MSR_LOADING = 34,
     EXIT_REASON_MWAIT = 36,
-    EXIT_REASON_MTF,
+    EXIT_REASON_MTF = 37,
     EXIT_REASON_MONITOR = 39,
-    EXIT_REASON_PAUSE,
-    EXIT_REASON_MCE_DURING_ENTRY,
+    EXIT_REASON_PAUSE = 40,
+    EXIT_REASON_MCE_DURING_ENTRY = 41,
     EXIT_REASON_TPR = 43,
-    EXIT_REASON_APIC_ACCESS,
-    EXIT_REASON_VIRTUALIZED_EOI,
-    EXIT_REASON_GDTR_IDTR,
-    EXIT_REASON_LDTR_TR,
-    EXIT_REASON_EPT_FAULT,
-    EXIT_REASON_EPT_MISCONFIG,
-    EXIT_REASON_INVEPT,
-    EXIT_REASON_RDTSCP,
-    EXIT_REASON_VMX_PREEMPT,
-    EXIT_REASON_INVVPID,
-    EXIT_REASON_WBINVD,
-    EXIT_REASON_XSETBV,
-    EXIT_REASON_APIC_WRITE,
-    EXIT_REASON_RDRAND,
-    EXIT_REASON_INVPCID,
-    EXIT_REASON_VMFUNC,
-    EXIT_REASON_ENCLS,
-    EXIT_REASON_RDSEED,
-    EXIT_REASON_PGMOD_LOG_FULL,
-    EXIT_REASON_XSAVES,
-    EXIT_REASON_XRSTORS,
-    EXIT_REASON_PCONFIG,
-    EXIT_REASON_SPP,
-    EXIT_REASON_UMWAIT,
-    EXIT_REASON_TPAUSE,
-    EXIT_REASON_LOADIWKEY,
-    EXIT_REASON_ENCLV,
+    EXIT_REASON_APIC_ACCESS = 44,
+    EXIT_REASON_VIRTUALIZED_EOI = 45,
+    EXIT_REASON_GDTR_IDTR = 46,
+    EXIT_REASON_LDTR_TR = 47,
+    EXIT_REASON_EPT_FAULT = 48,
+    EXIT_REASON_EPT_MISCONFIG = 49,
+    EXIT_REASON_INVEPT = 50,
+    EXIT_REASON_RDTSCP = 51,
+    EXIT_REASON_VMX_PREEMPT = 52,
+    EXIT_REASON_INVVPID = 53,
+    EXIT_REASON_WBINVD = 54,
+    EXIT_REASON_XSETBV = 55,
+    EXIT_REASON_APIC_WRITE = 56,
+    EXIT_REASON_RDRAND = 57,
+    EXIT_REASON_INVPCID = 58,
+    EXIT_REASON_VMFUNC = 59,
+    EXIT_REASON_ENCLS = 60,
+    EXIT_REASON_RDSEED = 61,
+    EXIT_REASON_PGMOD_LOG_FULL = 62,
+    EXIT_REASON_XSAVES = 63,
+    EXIT_REASON_XRSTORS = 64,
+    EXIT_REASON_PCONFIG = 65,
+    EXIT_REASON_SPP = 66,
+    EXIT_REASON_UMWAIT = 67,
+    EXIT_REASON_TPAUSE = 68,
+    EXIT_REASON_LOADIWKEY = 69,
+    EXIT_REASON_ENCLV = 70,
     EXIT_REASON_ENQCMD_PASID_FAILURE = 72,
-    EXIT_REASON_ENQCMDS_FAILURE,
-    EXIT_REASON_BUSLOCK,
-    EXIT_REASON_INSTRUCTION_TIMEOUT,
-    EXIT_REASON_SEAMCALL,
-    EXIT_REASON_TDCALL,
-    EXIT_REASON_RDMSRLIST,
-    EXIT_REASON_WRMSRLIST,
+    EXIT_REASON_ENQCMDS_FAILURE = 73,
+    EXIT_REASON_BUSLOCK = 74,
+    EXIT_REASON_INSTRUCTION_TIMEOUT = 75,
+    EXIT_REASON_SEAMCALL = 76,
+    EXIT_REASON_TDCALL = 77,
+    EXIT_REASON_RDMSRLIST = 78,
+    EXIT_REASON_WRMSRLIST = 79
 } basic_vmexit_reason_t;
 
 #define VMENTRY_INVAL_GUEST_STATE 33
@@ -4052,10 +4052,10 @@ struct invvpid_descriptor {
 
 typedef enum 
 {
-    INDIVIDUAL_ADDR,
-    SINGLE_CONTEXT,
-    ALL_CONTEXTS,
-    SINGLE_CONTEXT_NON_GLOBALS,
+    INDIVIDUAL_ADDR = 0,
+    SINGLE_CONTEXT = 1,
+    ALL_CONTEXTS = 2,
+    SINGLE_CONTEXT_NON_GLOBALS = 3,
 } invvpid_type_t;
 
 inline void ibhf_stub(void)
@@ -4275,10 +4275,10 @@ typedef union
 
 typedef enum 
 {
-    MOV_TO_CR,
-    MOV_FROM_CR,
-    CLTS,
-    LMSW
+    MOV_TO_CR = 0,
+    MOV_FROM_CR = 1,
+    CLTS = 2,
+    LMSW = 3
 } cr_access_type_t;
 
 #define LMSW_OPERAND_REG 0
@@ -4286,22 +4286,22 @@ typedef enum
 
 typedef enum 
 {
-    RAX,
-    RCX,
-    RDX,
-    RBX,
-    RSP,
-    RBP,
-    RSI,
-    RDI,
-    R8,
-    R9,
-    R10,
-    R11,
-    R12,
-    R13,
-    R14,
-    R15
+    RAX = 0,
+    RCX = 1,
+    RDX = 2,
+    RBX = 3,
+    RSP = 4,
+    RBP = 5,
+    RSI = 6,
+    RDI = 7,
+    R8 = 8,
+    R9 = 9,
+    R10 = 10,
+    R11 = 11,
+    R12 = 12,
+    R13 = 13,
+    R14 = 14,
+    R15 = 15
 } gpr_t;
 
 typedef union 
@@ -4334,9 +4334,9 @@ typedef union
 
 typedef enum 
 {
-    IO_BITS_8,
-    IO_BITS_16,
-    IO_BITS_32
+    IO_BITS_8 = 0,
+    IO_BITS_16 = 1,
+    IO_BITS_32 = 2
 } io_access_size_t;
 
 #define IO_OUT 0
@@ -4368,35 +4368,35 @@ typedef union
 
 typedef enum 
 {
-    NO_SCALING,
-    SCALE_2,
-    SCALE_4,
-    SCALE_8
+    NO_SCALING = 0,
+    SCALE_2 = 1,
+    SCALE_4 = 2,
+    SCALE_8 = 3
 } scaling_t;
 
 typedef enum 
 {
-    ADDR_BITS_16,
-    ADDR_BITS_32,
-    ADDR_BITS_64
+    ADDR_BITS_16 = 0,
+    ADDR_BITS_32 = 1,
+    ADDR_BITS_64 = 2
 } address_size_t;
 
 typedef enum 
 {
-    ES,
-    CS,
-    SS,
-    DS,
-    FS,
-    GS
+    ES = 0,
+    CS = 1,
+    SS = 2,
+    DS = 3,
+    FS = 4,
+    GS = 5
 } segment_selector_t;
 
 typedef enum 
 {
-    SGDT,
-    SIDT,
-    LGDT,
-    LIDT
+    SGDT = 0,
+    SIDT = 1,
+    LGDT = 2,
+    LIDT = 3
 } gdtr_idtr_identity_t;
 
 typedef union 
@@ -4425,10 +4425,10 @@ typedef union
 
 typedef enum 
 {
-    SLDT,
-    STR,
-    LLDT,
-    LTR
+    SLDT = 0,
+    STR = 1,
+    LLDT = 2,
+    LTR = 3
 } ldtr_tr_identity_t;
 
 typedef union 

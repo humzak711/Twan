@@ -166,8 +166,7 @@ typedef union
         u32 lass : 1;
         u32 lam : 1;
         u32 fred : 1;
-        u32 mpx : 1;
-        u32 reserved0 : 14;
+        u32 reserved0 : 15;
     } fields;
 } vper_cpu_feature_flags_t;
 
@@ -184,7 +183,8 @@ typedef union
         u64 xapic_disable_status : 1;
         u64 tsc_aux : 1;
         u64 lmce : 1;
-        u64 reserved0 : 56;
+        u64 mpx : 1;
+        u64 reserved0 : 55;
     } fields;
 } vper_cpu_trap_cache_t;
 

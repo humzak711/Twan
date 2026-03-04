@@ -7,11 +7,11 @@
 
 typedef enum
 {
-    VIPI_ROUTE,
-    VTLB_SHOOTDOWN_ROUTE,
-    VREAD_VCPU_STATE_ROUTE,
-    VPV_SPIN_KICK_ROUTE,
-    VNUM_ROUTE_TYPES /* enum guard, not a valid route type */
+    VIPI_ROUTE = 0,
+    VTLB_SHOOTDOWN_ROUTE = 1,
+    VREAD_VCPU_STATE_ROUTE = 2,
+    VPV_SPIN_KICK_ROUTE = 3,
+    VNUM_ROUTE_TYPES = 4 /* enum guard, not a valid route type */
 } vroute_type_t;
 
 typedef enum 

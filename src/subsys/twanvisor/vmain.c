@@ -274,7 +274,6 @@ void vper_cpu_flags_init(struct vper_cpu *vthis_cpu)
     vthis_cpu->feature_flags.fields.lass = ext_features1_a.fields.lass;
     vthis_cpu->feature_flags.fields.lam = ext_features1_a.fields.lam;
     vthis_cpu->feature_flags.fields.fred = ext_features1_a.fields.fred;
-    vthis_cpu->feature_flags.fields.mpx = ext_features0_b.fields.mpx;
 
     ia32_feature_control_t ia32_feature_control = {
         .val = __rdmsrl(IA32_FEATURE_CONTROL)
@@ -319,6 +318,8 @@ void vper_cpu_flags_init(struct vper_cpu *vthis_cpu)
     } else {
         vthis_cpu->vcache.trap_cache.fields.tsc_aux = 1;
     }
+
+    vthis_cpu->vcache.trap_cache.fields.mpx = ext_features0_b.fields.mpx;
 
     ia32_vmx_basic_t basic = {.val = __rdmsrl(IA32_VMX_BASIC)};
     u32 ia32_vmx_pinbased_ctls;
@@ -979,7 +980,7 @@ void __do_virtualise_core(u32 vprocessor_id, u64 rip, u64 rsp, rflags_t rflags)
     __vmwrite(VMCS_GUEST_RFLAGS, rflags.val);
     __vmwrite(VMCS_GUEST_DR7, __read_dr7());
 
-    __vmwrite(VMCS_GUEST_ACTIVITY_STATE, active);
+    __vmwrite(VMCS_GUEST_ACTIVITY_STATE, GUEST_ACTIVE);
     __vmwrite(VMCS_GUEST_VMCS_LINK_POINTER, ~0ULL);
 
     __vmwrite(VMCS_GUEST_IA32_EFER, efer.val);
@@ -995,7 +996,7 @@ void __do_virtualise_core(u32 vprocessor_id, u64 rip, u64 rsp, rflags_t rflags)
     vsetup_traps(vthis_cpu, vcpu);
 
     /* need to disable mpx in the supervisor */
-    if (vthis_cpu->feature_flags.fields.mpx != 0)
+    if (vthis_cpu->vcache.trap_cache.fields.mpx != 0)
         __wrmsrl(IA32_BNDCFGS, 0);
 
     /* launch */

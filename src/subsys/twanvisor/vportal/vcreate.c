@@ -536,7 +536,7 @@ void vcpu_entry(void)
 
     /* misc */
 
-    __vmwrite(VMCS_GUEST_ACTIVITY_STATE, active);
+    __vmwrite(VMCS_GUEST_ACTIVITY_STATE, GUEST_ACTIVE);
     __vmwrite(VMCS_GUEST_VMCS_LINK_POINTER, ~0ULL);
 
     /* msr load save areas */
