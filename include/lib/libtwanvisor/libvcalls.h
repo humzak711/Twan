@@ -1,7 +1,7 @@
 #ifndef _LIBVCALLS_H_
 #define _LIBVCALLS_H_
 
-#include <subsys/twanvisor/vemulate/vcalls.h>
+#include <subsys/twanvisor/vportal/vcalls.h>
 #include <subsys/twanvisor/vsched/vpartition.h>
 
 inline long tv_vcall(u64 id, u64 arg1, u64 arg2, u64 arg3, u64 arg4, u64 arg5,
@@ -174,6 +174,16 @@ inline long tv_vcreate_partition(struct vpartition *vpartition)
 inline long tv_vdestroy_partition(u8 vid)
 {
     return tv_vcall(VDESTROY_PARTITION, vid, 0, 0, 0, 0, 0);
+}
+
+inline long tv_vframe_set(u8 vid, u32 processor_id, u32 frame_id)
+{
+    return tv_vcall(VFRAME_SET, vid, processor_id, frame_id, 0, 0, 0);
+}
+
+inline long tv_vframe_unset(int physical_processor_id, u32 frame_id)
+{
+    return tv_vcall(VFRAME_UNSET, physical_processor_id, frame_id, 0, 0, 0, 0);
 }
 
 #endif

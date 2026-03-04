@@ -24,23 +24,17 @@
 
 STATIC_ASSERT(VNUM_VTIMERS <= UINT8_MAX);
 
-typedef enum
-{
-    VREADY,
-    VRUNNING,
-    VPAUSED,
-    VPV_SPINNING,
-    VTRANSITIONING,
-    VTERMINATED,
-    VINITIALIZING
-} vcpu_state_t;
+#define VREADY 0
+#define VRUNNING 1
+#define VPAUSED 2
+#define VPV_SPINNING 3
+#define VTRANSITIONING 4
+#define VTERMINATED 5
+#define VINITIALIZING 6
 
-typedef enum
-{
-    VBOOT_NONE,
-    VBOOT_READY,
-    VBOOT_PAUSED
-} vcpu_vboot_state_t;
+#define VBOOT_NONE 0
+#define VBOOT_READY 1
+#define VBOOT_PAUSED 2
 
 typedef enum
 {
@@ -61,8 +55,9 @@ typedef union
     } fields;
 } vcpu_flags_t;
 
-typedef void (*vput_callback_func_t)(void);
-typedef void (*vset_callback_func_t)(void);
+struct vcpu;
+typedef void (*vput_callback_func_t)(struct vcpu *vcpu);
+typedef void (*vset_callback_func_t)(struct vcpu *vcpu);
 
 /* worth noting that root currently doesnt use msr load save area, devs should
    disallow access to msr's used by root */
@@ -178,7 +173,7 @@ struct vcpu
     struct 
     {
         /* must grab schedulers lock before touching any of these fields */
-        vcpu_state_t state;
+        u8 state;
         bool tlb_flush_pending;
         u8 criticality;
         u32 time_slice_ticks;
@@ -236,8 +231,19 @@ struct vcpu
     } voperation_queue;
 
     struct vlaunch_regs vlaunch;
-    vcpu_vboot_state_t vboot_state;
+    u8 vboot_state;
 };
+
+#if CONFIG_TWANVISOR_VSCHED_STRICT
+
+#define vis_vboot_state_valid(state) ((state) == VBOOT_READY)
+
+#else
+
+#define vis_vboot_state_valid(state) \
+    ((state) == VBOOT_READY || (state) == VBOOT_PAUSED)
+
+#endif
 
 #define vqueue_to_vprocessor_id(vqueue_id) (vqueue_id) 
 #define vprocessor_to_vqueue_id(vprocessor_id) (vprocessor_id) 
