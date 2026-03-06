@@ -156,12 +156,19 @@ int __ioapic_config_irq(bool mask, u32 dest, u32 irq, u8 vector,
     volatile struct ioapic *mmio;
     u32 pin;
 
+    struct per_cpu *cpu = this_cpu_data();
+    u32 threshold = cpu->flags.fields.x2apic != 0 ? 
+                    EDID_MAX_SUPP : XAPIC_MAX_SUPP;
+                    
+    if (dest > threshold)
+        return -EINVAL;
+
     int ret = __lookup_irq_line(irq, &line, &mmio, &pin);
     if (ret < 0)
         return ret;
 
     bool normal = twan()->flags.fields.twanvisor_on &&
-                  this_cpu_data()->flags.fields.nmis_as_normal != 0;
+                  cpu->flags.fields.nmis_as_normal != 0;
 
     ioapic_redirection_entry_low_t entry_low = {
         .fields = {
@@ -174,9 +181,11 @@ int __ioapic_config_irq(bool mask, u32 dest, u32 irq, u8 vector,
         }
     };
 
+    lapic_id_edid_t dest_edid = {.val = dest};
     ioapic_redirection_entry_high_t entry_high = {
         .fields = {
-            .dest = dest
+            .dest = dest_edid.fields.xapic_id,
+            .edid = dest_edid.fields.edid
         }
     };
 
@@ -357,6 +366,8 @@ void mask_lapic_lint(void)
 
 void lapic_sync(void)
 {
+    u32 lapic_id = this_lapic_id();
+
     u32 regs[4] = {CPUID_FEATURE_BITS, 0, 0, 0};
     feature_bits_c_t feature_bits_c = {.val = regs[2]};
 
@@ -376,6 +387,9 @@ void lapic_sync(void)
         return;
     } 
 
+    if (lapic_id > XAPIC_MAX_SUPP)
+        __early_kpanic("faulty int controller - xapic id past max\n");
+
     u32 ext_regs0[4] = {CPUID_EXTENDED_FEATURES, 0, 0, 0};
     __cpuid(&ext_regs0[0], &ext_regs0[1], &ext_regs0[2], &ext_regs0[3]);
     extended_features0_d_t ext_regs0_d = {.val = ext_regs0[3]};
@@ -393,7 +407,7 @@ void lapic_sync(void)
             };
 
             if (stat.fields.legacy_xapic_disabled != 0)
-                __early_kpanic("xapic disabled\n");
+                __early_kpanic("faulty int controller - xapic disabled\n");
         }
     }
 

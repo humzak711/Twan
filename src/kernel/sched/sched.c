@@ -4,8 +4,7 @@
 
 void sched_worker(__unused void *unused)
 {
-    while (1)
-        sched_yield();
+    spin_until(false);
 }
 
 void sched_trampoline_ipi(__unused u64 unused)

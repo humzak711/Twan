@@ -16,8 +16,14 @@ int __map_irq(bool enable, u32 processor_id, u32 irq, u8 vector,
     if (!cpu_valid(processor_id))
         return -EINVAL;
 
-    return __ioapic_config_irq(!enable, lapic_id_of(processor_id), irq, vector,
-                               trig_explicit, trig);
+    /* prevent implicit broadcasting */
+
+    u32 lapic_id = lapic_id_of(processor_id);
+    if ((lapic_id & 0xff) == 0xff)
+        return -EINVAL;
+
+    return __ioapic_config_irq(!enable, lapic_id, irq, vector, trig_explicit, 
+                               trig);
 }
 
 int map_irq(bool enable, u32 processor_id, u32 irq, u8 vector)

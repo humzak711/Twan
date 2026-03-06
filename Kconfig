@@ -4,7 +4,7 @@ mainmenu "Twan Configuration"
 
 config NUM_CPUS
     int "Num CPUs"
-    range 1 1024
+    range 1 256
     default 32
     ---help---
         Maximum CPU count

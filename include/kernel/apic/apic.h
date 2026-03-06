@@ -10,6 +10,20 @@
 #define PIC2_COMMAND 0xA0
 #define PIC2_DATA 0xA1
 
+#define XAPIC_MAX_SUPP 255
+#define EDID_MAX_SUPP 32767
+
+typedef union 
+{
+    u32 val;
+    struct 
+    {
+        u32 xapic_id : 8;
+        u32 edid : 7;
+        u32 reserved0 : 17;
+    } fields;
+} lapic_id_edid_t;
+
 typedef union 
 {
     u8 val;

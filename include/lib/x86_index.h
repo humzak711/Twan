@@ -600,7 +600,8 @@ typedef union
     u32 val;
     struct 
     {
-        u32 reserved0 : 24;
+        u32 reserved0 : 17;
+        u32 edid : 7;
         u32 dest : 8;
     } fields;
 } ioapic_redirection_entry_high_t;
