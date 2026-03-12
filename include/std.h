@@ -30,11 +30,7 @@
         while (!(cond))    \
             cpu_relax();   \
     } while (0)            \
-
-#define UNREACHABLE() do {      \
-    __hlt();                    \
-} while (1)                     \
-
+    
 typedef union 
 {
     u8 val;

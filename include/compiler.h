@@ -21,6 +21,8 @@
 #define __fallthrough __attribute__((fallthrough))
 #define __unroll_loops __attribute__((optimize("unroll-loops")))
 
+#define UNREACHABLE() __builtin_unreachable()
+
 #define STATIC_ASSERT(...) _Static_assert(__VA_ARGS__)
 
 #define SIZE_ASSERT(obj, size) \

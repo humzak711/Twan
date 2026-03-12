@@ -156,16 +156,11 @@ int __ioapic_config_irq(bool mask, u32 dest, u32 irq, u8 vector,
     volatile struct ioapic *mmio;
     u32 pin;
 
-    struct per_cpu *cpu = this_cpu_data();
-    u32 threshold = cpu->flags.fields.x2apic != 0 ? 
-                    EDID_MAX_SUPP : XAPIC_MAX_SUPP;
-                    
-    if (dest > threshold)
-        return -EINVAL;
-
     int ret = __lookup_irq_line(irq, &line, &mmio, &pin);
     if (ret < 0)
         return ret;
+
+    struct per_cpu *cpu = this_cpu_data();
 
     bool normal = twan()->flags.fields.twanvisor_on &&
                   cpu->flags.fields.nmis_as_normal != 0;
@@ -366,8 +361,6 @@ void mask_lapic_lint(void)
 
 void lapic_sync(void)
 {
-    u32 lapic_id = this_lapic_id();
-
     u32 regs[4] = {CPUID_FEATURE_BITS, 0, 0, 0};
     feature_bits_c_t feature_bits_c = {.val = regs[2]};
 
@@ -386,9 +379,6 @@ void lapic_sync(void)
         this_cpu_data()->flags.fields.x2apic = 1;
         return;
     } 
-
-    if (lapic_id > XAPIC_MAX_SUPP)
-        __early_kpanic("faulty int controller - xapic id past max\n");
 
     u32 ext_regs0[4] = {CPUID_EXTENDED_FEATURES, 0, 0, 0};
     __cpuid(&ext_regs0[0], &ext_regs0[1], &ext_regs0[2], &ext_regs0[3]);
