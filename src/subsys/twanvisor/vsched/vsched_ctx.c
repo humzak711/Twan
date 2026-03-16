@@ -26,9 +26,6 @@ void vsched_put_ctx(struct vcpu *vcpu, struct interrupt_info *ctx)
     vcpu->context.rflags = ctx->rflags;
     vcpu->context.rip = ctx->rip;
     vcpu->context.fp_context = ctx->regs.fxsave_region;
-
-    if (vcpu->put_callback_func)
-        INDIRECT_BRANCH_SAFE(vcpu->put_callback_func(vcpu));
 }
 
 void vsched_set_ctx(struct vcpu *vcpu, struct interrupt_info *ctx)
@@ -53,9 +50,6 @@ void vsched_set_ctx(struct vcpu *vcpu, struct interrupt_info *ctx)
     ctx->rflags = vcpu->context.rflags;
     ctx->rip = vcpu->context.rip;
     ctx->regs.fxsave_region = vcpu->context.fp_context;
-
-    if (vcpu->set_callback_func)
-        INDIRECT_BRANCH_SAFE(vcpu->set_callback_func(vcpu));
 }
 
 void vsched_enter_ctx(struct vcpu *vcpu, struct interrupt_info *ctx)
