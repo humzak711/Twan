@@ -129,6 +129,19 @@ struct vlaunch_regs
     selector_t cs;
 };
 
+struct vcpu_actions
+{
+    union
+    {
+        u64 val;
+        struct
+        {  
+            u64 ept_ve : 1;
+            u64 reserved0 : 63;
+        } fields;
+    } feature_config;
+};
+
 typedef union 
 {
     u32 val;
@@ -235,6 +248,7 @@ struct vcpu
 
     struct vlaunch_regs vlaunch;
     vcpu_vboot_state_t vboot_state;
+    struct vcpu_actions actions;
 };
 
 #if CONFIG_TWANVISOR_VSCHED_STRICT

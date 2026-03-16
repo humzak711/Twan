@@ -269,8 +269,7 @@ typedef union
     (dummy value) otherwise will #GP(0) into the guest
 
 -   ept_violations_cause_ve:
-*   ept violations inject a #VE into the guest otherwise they cause guest 
-    failure
+*   support for ept violations injecting a #VE into the guest
 
 -   suppress_ve_supported:
 *   if set, suppressed ve's will be emulated by the vmm, otherwise it'll cause

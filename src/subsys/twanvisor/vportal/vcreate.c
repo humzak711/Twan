@@ -38,6 +38,12 @@ int vcpu_precheck(struct vcpu *vcpu)
             return -EINVAL;
     }
 
+    if (vcpu->actions.feature_config.fields.ept_ve == 1 && 
+        vtarget_cpu->arch_flags.support.fields.ept_ve == 0) {
+
+        return -EOPNOTSUPP;
+    }
+
     if ((vcpu->vlaunch.rip >> 32) != 0)
         return -EINVAL;
 
@@ -362,6 +368,8 @@ void vcpu_entry(void)
 
     if (support.fields.procbased_ctls2 != 0) {
 
+        bool ept_ve = current->actions.feature_config.fields.ept_ve;
+        
         vmx_procbased_ctls2_t proc2 = {
             .fields = {
                 .enable_invpcid = 1,
@@ -369,7 +377,7 @@ void vcpu_entry(void)
                 .enable_vpid = vpid.fields.enabled,
                 .wbinvd_exiting = 1, 
                 .enable_ept = 1,
-                .ept_violation_ve = 1,
+                .ept_violation_ve = ept_ve,
                 .unrestricted_guest = 1,
                 .intel_pt_use_guest_phys_addr = 1
             }
