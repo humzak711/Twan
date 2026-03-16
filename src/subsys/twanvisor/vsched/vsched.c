@@ -137,7 +137,7 @@ struct vcpu *vsched_get_or_idle(struct interrupt_info *ctx)
 
     vmcs_unlock_isr_restore(&vsched->lock, &node);
 
-    vsched_arm_timer(ticks);
+    vsched_start_schedule(ticks);
     return vcpu;
 }
 
@@ -167,15 +167,10 @@ void vthis_vsched_reschedule(struct vcpu *current,
             current->vsched_metadata.time_slice_ticks;
     }
 
-    struct vcpu *vcpu = vcurrent_vcpu();
-
-    u32 ticks = vcpu->vsched_metadata.current_time_slice_ticks;
+    u32 ticks = vcurrent_vcpu()->vsched_metadata.current_time_slice_ticks;
     vmcs_unlock_isr_restore(&vsched->lock, &node);
 
-    if (vcpu->reschedule_callback_func)
-        INDIRECT_BRANCH_SAFE(vcpu->reschedule_callback_func(vcpu));
-
-    vsched_arm_timer(ticks);
+    vsched_start_schedule(ticks);
 }
 
 void vsched_preempt_isr(void)

@@ -42,4 +42,14 @@ void vsched_arm_timer(u32 ticks)
     write_flags(flags);
 }
 
+void vsched_start_schedule(u32 ticks)
+{
+    struct vcpu *vcpu = vcurrent_vcpu();
+
+    if (vcpu->schedule_callback_func)
+        INDIRECT_BRANCH_SAFE(vcpu->schedule_callback_func(vcpu));
+
+    vsched_arm_timer(ticks);
+}
+
 #endif

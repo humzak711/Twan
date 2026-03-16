@@ -62,7 +62,7 @@ typedef union
 } vcpu_flags_t;
 
 struct vcpu;
-typedef void (*vreschedule_callback_func_t)(struct vcpu *vcpu);
+typedef void (*vschedule_callback_func_t)(struct vcpu *vcpu);
 
 /* worth noting that root currently doesnt use msr load save area, devs should
    disallow access to msr's used by root */
@@ -203,7 +203,7 @@ struct vcpu
 
     struct context context;
 
-    vreschedule_callback_func_t reschedule_callback_func;
+    vschedule_callback_func_t schedule_callback_func;
 
     u32 vqueue_id;
     struct list_double vsched_nodes[VSCHED_NUM_CRITICALITIES];
