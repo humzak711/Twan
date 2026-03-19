@@ -249,6 +249,17 @@ inline void vadvance_guest_rip(void)
     }
 
     __vmwrite(VMCS_GUEST_RIP, rip);
+
+    guest_interruptibility_state_t state = {
+        .val = vmread(VMCS_GUEST_INTERRUPTIBILITY_STATE)
+    };
+
+    if (state.fields.sti_blocking != 0 || state.fields.mov_ss_blocking != 0) {
+
+        state.fields.mov_ss_blocking = 0;
+        state.fields.sti_blocking = 0;
+        __vmwrite(VMCS_GUEST_INTERRUPTIBILITY_STATE, state.val);
+    }
 }
 
 inline bool vmwrite_adjusted(u32 msr, u64 field, u64 val)
