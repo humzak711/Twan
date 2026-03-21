@@ -224,6 +224,8 @@ struct vcpu
 
     struct list_double ipi_nodes[NUM_CPUS];
 
+    u8 wait_for_map[NUM_CPUS];
+
     struct 
     {
         /* grab isr dispatcher lock for these */

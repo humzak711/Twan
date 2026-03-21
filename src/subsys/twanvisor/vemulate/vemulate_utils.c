@@ -284,8 +284,6 @@ int vemu_inject_external_interrupt_far(u8 target_vid, u32 processor_id,
     return 0;
 }
 
-static u8 pending_maps[NUM_CPUS][NUM_CPUS];
-
 int vemu_tlb_invalidate(u8 target_vid)
 {   
     struct vcpu *current = vcurrent_vcpu();
@@ -304,10 +302,9 @@ int vemu_tlb_invalidate(u8 target_vid)
         return -EINVAL;
     }
 
-    u32 this_vprocessor_id = vthis_vprocessor_id();
+    u8 *map = current->wait_for_map;
     u32 num_enabled_cpus = vnum_cpus();
 
-    u8 *map = pending_maps[this_vprocessor_id];
     memset(map, 0, num_enabled_cpus);
 
     /* first pass: set relevant vcpus tlb flush pending state, if theyre running
