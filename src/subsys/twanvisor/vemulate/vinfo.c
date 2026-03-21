@@ -128,6 +128,7 @@ void vinfo_emulation_features(struct vregs *vregs)
     u32 subleaf = vregs->regs.rcx & 0xffffffff;
 
     struct vper_cpu *vthis_cpu = vthis_cpu_data();
+    struct vcpu *current = vcurrent_vcpu();
 
     switch (subleaf) {
 
@@ -149,7 +150,9 @@ void vinfo_emulation_features(struct vregs *vregs)
                     .ept_violations_cause_ve = support.fields.ept_ve,
                     
                     .wbinvd_nop = support.fields.wbinvd_exiting,
-                    .invd_nop = 1
+                    .invd_nop = 1,
+                    
+                    .cache_topology_valid = current->root
                 }
             };
 

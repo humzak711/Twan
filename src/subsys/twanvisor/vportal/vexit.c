@@ -247,6 +247,8 @@ static void vexit_cpuid(struct vregs *vregs)
 {
     vcurrent_vcpu_enable_preemption();
 
+    struct vcpu *current = vcurrent_vcpu();
+
     u32 eax = vregs->regs.rax & 0xffffffff;
     u32 ebx = vregs->regs.rbx & 0xffffffff;
     u32 ecx = vregs->regs.rcx & 0xffffffff;
@@ -295,11 +297,6 @@ static void vexit_cpuid(struct vregs *vregs)
             ebx = feature_bits_b.val;
             ecx = feature_bits_c.val;
             edx = feature_bits_d.val;
-            break;
-
-        case 4:
-
-            eax &= 0x3fff;
             break;
 
         case CPUID_EXTENDED_FEATURES:
@@ -369,6 +366,13 @@ static void vexit_cpuid(struct vregs *vregs)
             extended_sig_d.fields.rdtscp = 0;
             edx = extended_sig_d.val;
             break;
+
+        case 4:
+
+            if (current->root)
+                break;
+
+            __fallthrough;
 
         case 5:
         case 0x0b:

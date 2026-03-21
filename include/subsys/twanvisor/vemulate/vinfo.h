@@ -275,6 +275,15 @@ typedef union
 *   if set, suppressed ve's will be emulated by the vmm, otherwise it'll cause
     guest failure
 
+-   wbinvd_nop:
+*   if set, wbinvd is treated as a nop
+
+-   invd_nop:
+*   if set, invd is treated as a nop
+
+-   cache_topology_valid:
+*   if set, cpuid leaf 4 is valid
+
 */
 
 typedef union 
@@ -290,7 +299,8 @@ typedef union
         u32 suppress_ve_supported : 1;
         u32 wbinvd_nop : 1;
         u32 invd_nop : 1;
-        u32 reserved0 : 24;
+        u32 cache_topology_valid : 1;
+        u32 reserved0 : 23;
     } fields;
 } vcpuid_emulation_features0_b_t;
 
