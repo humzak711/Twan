@@ -96,7 +96,7 @@ u32 __ioapic_num_redirection_entries(volatile struct ioapic *mmio);
 int __lookup_irq_line(u32 irq, struct irq_line *line, 
                       volatile struct ioapic **mmio, u32 *pin);
 
-int __ioapic_config_irq(bool mask, u32 dest, u32 irq, u8 vector, 
+int __ioapic_config_irq(bool mask, u32 processor_id, u32 irq, u8 vector, 
                         bool trig_explicit, bool trig);
 
 int __ioapic_config(void);

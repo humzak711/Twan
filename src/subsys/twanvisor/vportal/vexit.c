@@ -183,10 +183,6 @@ static void vexit_exception(__unused struct vregs *vregs)
         .val = vmread32(VMCS_RO_VMEXIT_INTERRUPT_INFO)
     };
 
-    vectored_events_info_t idt_vectoring_info = {
-        .val = vmread32(VMCS_RO_IDT_VECTORING_INFO_FIELD)
-    };
-
     VDYNAMIC_ASSERT(info.fields.valid != 0);
 
     if (info.fields.nmi_unblocking != 0) {
@@ -222,19 +218,12 @@ static void vexit_exception(__unused struct vregs *vregs)
     }
     
     vcurrent_vcpu_enable_preemption();
-
-    if (idt_vectoring_info.fields.valid != 0)
-        vqueue_idt_vectoring_info(idt_vectoring_info);    
 }
 
 static void vexit_ext_intr(__unused struct vregs *vregs)
 {
     vectored_events_info_t info = {
         .val = vmread32(VMCS_RO_VMEXIT_INTERRUPT_INFO)
-    };
-
-    vectored_events_info_t idt_vectoring_info = {
-        .val = vmread32(VMCS_RO_IDT_VECTORING_INFO_FIELD)
     };
 
     VDYNAMIC_ASSERT(info.fields.valid != 0);
@@ -253,9 +242,6 @@ static void vexit_ext_intr(__unused struct vregs *vregs)
     vexit_ext_dispatcher(info.fields.vector);
     
     vcurrent_vcpu_enable_preemption();
-
-    if (idt_vectoring_info.fields.valid != 0)
-        vqueue_idt_vectoring_info(idt_vectoring_info);
 }
 
 static void vexit_cpuid(struct vregs *vregs)
@@ -817,9 +803,16 @@ void vexit_dispatcher(struct vregs *vregs)
 
     /* can safely be interrupted from here on */
     enable_interrupts();
+
+    vectored_events_info_t idt_vectoring_info = {
+        .val = vmread32(VMCS_RO_IDT_VECTORING_INFO_FIELD)
+    };
     
     INDIRECT_BRANCH_SAFE(func(vregs));
     VDYNAMIC_ASSERT(vcurrent_vcpu_is_preemption_enabled());
+
+    if (idt_vectoring_info.fields.valid != 0)
+        vqueue_idt_vectoring_info(idt_vectoring_info);
 
     __venter();
 }

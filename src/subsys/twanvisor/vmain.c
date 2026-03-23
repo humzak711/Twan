@@ -411,9 +411,9 @@ int vper_cpu_data_init(struct vper_cpu *vthis_cpu, u32 vprocessor_id)
     lapic_reconfig(vthis_cpu);
     vset_available_vectors(&vthis_cpu->available_vectors);
 
-    vthis_cpu->this = vthis_cpu;
-    
     struct per_cpu *this_cpu = this_cpu_data();
+
+    vthis_cpu->this = vthis_cpu;
 
     vthis_cpu->mxcsr_mask = mxcsr_mask();
 
@@ -560,6 +560,8 @@ int vper_cpu_data_init(struct vper_cpu *vthis_cpu, u32 vprocessor_id)
 
     vthis_cpu->arch_flags.lapic_period_fs = lapic_period_fs;
     vthis_cpu->arch_flags.lapic_frequency_hz = lapic_frequency_hz;
+
+    this_cpu->available_vectors = vthis_cpu->available_vectors;
 
     this_cpu->num_vtimers = VNUM_VTIMERS;
     this_cpu->vtimer_period_fs = vmx_preempt_period_fs;

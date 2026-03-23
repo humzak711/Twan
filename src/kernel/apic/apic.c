@@ -149,21 +149,32 @@ int __lookup_irq_line(u32 irq, struct irq_line *line,
     return 0;
 }
 
-int __ioapic_config_irq(bool mask, u32 dest, u32 irq, u8 vector, 
+int __ioapic_config_irq(bool mask, u32 processor_id, u32 irq, u8 vector, 
                         bool trig_explicit, bool trig)
 {
     struct irq_line line;
     volatile struct ioapic *mmio;
     u32 pin;
 
+    if (!cpu_valid(processor_id))
+        return -EINVAL;
+
     int ret = __lookup_irq_line(irq, &line, &mmio, &pin);
     if (ret < 0)
         return ret;
 
-    struct per_cpu *cpu = this_cpu_data();
+    struct per_cpu *cpu = cpu_data(processor_id);
+    u32 dest = cpu->lapic_id;
 
-    bool normal = twan()->flags.fields.twanvisor_on &&
-                  cpu->flags.fields.nmis_as_normal != 0;
+    bool twanvisor_on = twan()->flags.fields.twanvisor_on != 0;
+    bool normal = twanvisor_on && cpu->flags.fields.nmis_as_normal != 0;
+
+#if CONFIG_SUBSYS_TWANVISOR
+    
+    if (twanvisor_on && !bmp256_test(&cpu->available_vectors, vector))
+        return -EINVAL;
+
+#endif
 
     ioapic_redirection_entry_low_t entry_low = {
         .fields = {

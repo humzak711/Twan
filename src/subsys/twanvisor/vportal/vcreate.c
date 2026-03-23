@@ -44,7 +44,7 @@ int vcpu_precheck(struct vcpu *vcpu)
         return -EOPNOTSUPP;
     }
 
-    if ((vcpu->vlaunch.rip >> 32) != 0)
+    if ((vcpu->vlaunch.rip >> 16) != 0)
         return -EINVAL;
 
     if (vcpu->vsched_metadata.terminate)

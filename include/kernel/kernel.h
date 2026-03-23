@@ -98,6 +98,8 @@ struct per_cpu
     u64 vsched_timer_frequency_hz;
     u64 vsched_timer_period_fs;
 
+    struct bmp256 available_vectors;
+
 #endif
 
     atomic_ptr_t isr_table[NUM_VECTORS];

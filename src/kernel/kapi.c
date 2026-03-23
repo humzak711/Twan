@@ -22,7 +22,7 @@ int __map_irq(bool enable, u32 processor_id, u32 irq, u8 vector,
     if ((lapic_id & 0xff) == 0xff)
         return -EINVAL;
 
-    return __ioapic_config_irq(!enable, lapic_id, irq, vector, trig_explicit, 
+    return __ioapic_config_irq(!enable, processor_id, irq, vector, trig_explicit, 
                                trig);
 }
 
