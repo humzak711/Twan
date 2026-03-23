@@ -108,7 +108,7 @@ void enable_lapic(u8 spurious_vector);
 void disable_lapic(void);
 void mask_lapic_lint(void);
 
-void lapic_sync(void);
+void lapic_sync(bool bsp);
 
 int __config_lapic_nmis(void);
 

@@ -701,7 +701,7 @@ void __do_virtualise_core(u32 vprocessor_id, u64 rip, u64 rsp, rflags_t rflags)
     struct vper_cpu *vthis_cpu = &vkernel.per_cpu_data[vprocessor_id];
 
     vthis_cpu->arch_flags.support.fields.x2apic = 
-        this_cpu_data()->flags.fields.x2apic;
+        twan()->flags.fields.x2apic;
 
     int ret = vper_cpu_data_init(vthis_cpu, vprocessor_id);
     if (ret < 0) {

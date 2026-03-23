@@ -306,7 +306,7 @@ int __ioapic_config(void)
 
 u64 lapic_read(u32 offset)
 {
-    if (this_cpu_data()->flags.fields.x2apic == 0) 
+    if (twan()->flags.fields.x2apic == 0) 
         return *(volatile u32 *)((u8 *)twan()->acpi.lapic_mmio + offset);
 
     u32 msr = IA32_X2APIC_BASE + (offset / 16);
@@ -318,7 +318,7 @@ void lapic_write(u32 offset, u64 val)
     /* treat writes to ICR_HIGH as the entire ICR, and writes to ICR_LOW as
        writes to the low ICR to allow for deasserts in xapic mode */
 
-    if (this_cpu_data()->flags.fields.x2apic == 0) {
+    if (twan()->flags.fields.x2apic == 0) {
 
         u32 lower = (u32)val;
         u32 upper = (u32)(val >> 32);
@@ -370,12 +370,24 @@ void mask_lapic_lint(void)
     lapic_write(LAPIC_LINT1_OFFSET, lint1.val);
 }
 
-void lapic_sync(void)
+void lapic_sync(bool bsp)
 {
+    struct twan_kernel *kernel = twan();
+    bool x2apic = kernel->flags.fields.x2apic != 0;
+
     u32 regs[4] = {CPUID_FEATURE_BITS, 0, 0, 0};
     feature_bits_c_t feature_bits_c = {.val = regs[2]};
 
     if (feature_bits_c.fields.x2apic != 0) {
+
+        if (!bsp) {
+
+            if (!x2apic)
+                __early_kpanic("faulty interrupt controller\n");
+
+        } else {
+            kernel->flags.fields.x2apic = 1;
+        }
 
         ia32_apic_base_t base = {.val = __rdmsrl(IA32_APIC_BASE)};
 
@@ -386,10 +398,12 @@ void lapic_sync(void)
             base.fields.enable_x2apic_mode = 1;
             __wrmsrl(IA32_APIC_BASE, base.val);
         }
-        
-        this_cpu_data()->flags.fields.x2apic = 1;
+
         return;
     } 
+
+    if (!bsp && x2apic)
+        __early_kpanic("faulty interrupt controller\n");
 
     u32 ext_regs0[4] = {CPUID_EXTENDED_FEATURES, 0, 0, 0};
     __cpuid(&ext_regs0[0], &ext_regs0[1], &ext_regs0[2], &ext_regs0[3]);
@@ -488,7 +502,7 @@ int __config_lapic_nmis(void)
 
 void lapic_wait_delivery_complete(void)
 {
-    if (this_cpu_data()->flags.fields.x2apic != 0)
+    if (twan()->flags.fields.x2apic != 0)
         return;
 
     lapic_icr_low_t icr_low;
@@ -516,7 +530,7 @@ void lapic_send_ipi(u32 dest, u32 delivery_mode, u32 dest_mode,
         }
     };
 
-    if (this_cpu_data()->flags.fields.x2apic == 0)
+    if (twan()->flags.fields.x2apic == 0)
         dest <<= 24;
 
     lapic_icr_high_t icr_high = {
@@ -551,7 +565,7 @@ void lapic_wakeup_ap(u32 lapic_id, u32 vector)
 
     u32 dest = lapic_id;
 
-    if (this_cpu_data()->flags.fields.x2apic == 0)
+    if (twan()->flags.fields.x2apic == 0)
         dest <<= 24;
 
     lapic_icr_high_t init_dest = {
@@ -565,7 +579,7 @@ void lapic_wakeup_ap(u32 lapic_id, u32 vector)
     
     lapic_wait_delivery_complete();
 
-    if (this_cpu_data()->flags.fields.x2apic == 0) {
+    if (twan()->flags.fields.x2apic == 0) {
 
         init_assert.fields.level = LAPIC_DEASSERT;
         lapic_write(LAPIC_ICR_LOW_OFFSET, init_assert.val);

@@ -41,8 +41,7 @@ typedef union
         u64 sched_init : 1;
         u64 vmx : 1;
         u64 nmis_as_normal : 1;
-        u64 x2apic : 1;
-        u64 reserved0 : 24;
+        u64 reserved0 : 25;
         u64 mxcsr_mask : 32;
     } fields;
 } cpu_flags_t;
@@ -141,7 +140,8 @@ typedef union
         u32 bsp_initialized : 1;
         u32 twanvisor_on : 1;
         u32 vid : 8;
-        u32 reserved0 : 21;
+        u32 x2apic : 1;
+        u32 reserved0 : 20;
     } fields;
 } twan_flags_t;
 

@@ -48,7 +48,7 @@ static __noreturn void __setup_ap(u32 lapic_id, u32 thread_id,
             register_base_isrs_local();
 
             /* configure the lapic */
-            lapic_sync();
+            lapic_sync(false);
             disable_lapic();
             mask_lapic_lint();
             enable_lapic(SPURIOUS_INT_VECTOR);
@@ -113,7 +113,7 @@ __noreturn void __start_twan(u64 multiboot_info_phys, bool is_bsp)
         __early_kpanic("failed to initialize idt\n");
 
     /* do any pre wakeup global initialisation */
-    lapic_sync();
+    lapic_sync(true);
     remap_mask_8259pic();
 
     /* pre wakeup local initialisation */
